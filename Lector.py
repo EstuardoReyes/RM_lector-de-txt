@@ -2,7 +2,7 @@ import os
 import openpyxl
 import time
 
-ruta_carpetas = 'D:/Galeria/Escritorio/Nueva carpeta/'
+ruta_carpetas = 'C:/Users/Estuardo Reyes/Desktop/Nueva carpeta/'
 usuarios = []
 
 def automata(archivo):
@@ -23,6 +23,8 @@ def automata(archivo):
     usb = ''
     carpeta = ''
     userName = ''
+    dominio = ''
+    usuario = []
     f = open(ruta+"/"+texto, 'r')
     while (True):
         linea = f.readline()
@@ -33,7 +35,6 @@ def automata(archivo):
                 if actual == '\n':
                     state = 1
                     nombre = auxiliar
-                    print(nombre)
                     auxiliar = ''
                     x = x + 1
                 else:
@@ -44,7 +45,6 @@ def automata(archivo):
                 if actual == '\n':
                     state = 2
                     departamento = auxiliar
-                    print(departamento)
                     auxiliar = ''
                     x = x + 1
                 else:
@@ -55,7 +55,6 @@ def automata(archivo):
                 if actual == '\n':
                     state = 3
                     carpeta = auxiliar
-                    print(carpeta)
                     auxiliar = ''
                     x = x + 1
                 else:
@@ -66,7 +65,6 @@ def automata(archivo):
                 if actual == '\n':
                     state = 4
                     usb = auxiliar
-                    print(usb)
                     auxiliar = ''
                     x = x + 1
                 else:
@@ -86,7 +84,6 @@ def automata(archivo):
                     if ord(actual) == 10:
                         state = 6
                         marca = auxiliar
-                        print(marca)
                         x = x + 1
                         auxiliar = ''
 
@@ -109,7 +106,6 @@ def automata(archivo):
                     if ord(actual) == 10:
                         state = 8
                         modelo = auxiliar
-                        print(modelo)
                         auxiliar = ''
                         x = x + 1
                     else:
@@ -117,11 +113,259 @@ def automata(archivo):
                         x = x + 1
                 else:
                     x = x + 1
-
-
-                
-                    
-                
+#######################################################
+            elif state == 8: # se encarga de ignorar la palabra serial number
+                if actual == '\n' and x > 5:
+                    state = 9
+                    auxiliar = ''
+                    x = x + 1
+                else:
+                    x = x + 1
+    ##################################################################################
+            elif state == 9: #agrega el modelo del equipo
+                if x % 2 == 1 and ( x > 3 or ord(actual) != 10 ) :
+                    if ord(actual) == 10:
+                        state = 10
+                        serial = auxiliar
+                        auxiliar = ''
+                        x = x + 1
+                    else:
+                        auxiliar = auxiliar + actual
+                        x = x + 1
+                else:
+                    x = x + 1
+#######################################################
+            elif state == 10: # se encarga de ignorar la palabra ipaddress
+                if ord(actual) == 34:
+                    state = 11
+                    auxiliar = ''
+                    x = x + 1
+                else:
+                    x = x + 1
+    ##################################################################################
+            elif state == 11: #agrega la ip
+                if x % 2 == 1 and ( x > 3 or ord(actual) != 10 ) :
+                    if ord(actual) == 34:
+                        state = 12
+                        ip = auxiliar
+                        auxiliar = ''
+                        x = x + 1
+                    else:
+                        auxiliar = auxiliar + actual
+                        x = x + 1
+                else:
+                    x = x + 1
+######################################################################################
+            elif state == 12:  
+                if ord(actual) == 125:
+                    state = 13
+                    x = x + 1
+                else:
+                    x = x + 1
+#######################################################
+            elif state == 13: # se encarga de ignorar la palabra name del procesador
+                if ord(actual) == 101:  
+                    state = 14
+                    auxiliar = ''
+                    x = x + 2
+                else:
+                    x = x + 1
+     #######################################################
+            elif state == 14: # se encarga de ignorar la palabra name del procesador
+                if ord(actual) == 10:
+                    state = 15
+                    auxiliar = ''
+                    x = x + 2
+                else:
+                    x = x + 1
+    ##################################################################################
+            elif state == 15: #agrega el modelo del procesador
+                if x % 2 == 1 and ( x > 3 or ord(actual) != 10 ) :
+                    if ord(actual) == 10:
+                        state = 16
+                        cpu = auxiliar
+                        auxiliar = ''
+                        x = x + 1
+                    else:
+                        auxiliar = auxiliar + actual
+                        x = x + 1
+                else:
+                    x = x + 1
+####################################################################################
+            elif state == 16:  #agrega   el primer disco duro
+                if ord(actual) > 47 and ord(actual) < 58:
+                    auxiliar = auxiliar + actual
+                    x = x + 1
+                elif ord(actual) == 10 and auxiliar != '':
+                    state = 17
+                    x = x + 1
+                else:
+                    x = x + 1
+###########################################################
+            elif state == 17: #verifica si viene otro disco duro o no
+                if ord(actual) > 47 and ord(actual) < 58:
+                    auxiliar = auxiliar + ",  "
+                    state = 18
+                elif ord(actual) == 77:
+                    state = 19
+                    discoDuro = auxiliar
+                    auxiliar = ''
+                    x = x + 1
+                else:
+                    x = x + 1
+#####################################################################
+            elif state == 18:  #ingresa el otro disco duro
+                if ord(actual) > 47 and ord(actual) < 58:
+                    auxiliar = auxiliar + actual
+                    x = x + 1
+                elif ord(actual) == 10 and auxiliar != '':
+                    state = 19
+                    discoDuro = auxiliar
+                    auxiliar = ''
+                    x = x + 1
+                else:
+                    x = x + 1
+#######################################################################
+            elif state == 19: #confirma que lo que viene es la version de windows
+                if ord(actual) == 77:
+                    state = 20
+                else:
+                    x = x + 1
+#######################################################################################
+            elif state == 20 : #agrega la version de windows
+                if x % 2 == 1 and ( x > 3 or ord(actual) != 10 ) :
+                    if ord(actual) == 10:
+                        state = 21
+                        windows = auxiliar
+                        auxiliar = ''
+                        x = x + 1
+                    else:
+                        auxiliar = auxiliar + actual
+                        x = x + 1
+                else:
+                    x = x + 1
+#######################################################
+            elif state == 21: # se encarga de ignorar orifinal productkey
+                if ord(actual) == 10 and x > 5:
+                    state = 22
+                    auxiliar = ''
+                    x = x + 1
+                else:
+                    x = x + 1
+    ##################################################################################
+            elif state == 22: #agrega la licencia de windows
+                if x % 2 == 1 and ( x > 3 or ord(actual) != 10 ) :
+                    if ord(actual) == 10:
+                        state = 23
+                        licenciaWindows = auxiliar
+                        auxiliar = ''
+                        x = x + 1
+                    else:
+                        auxiliar = auxiliar + actual
+                        x = x + 1
+                else:
+                    x = x + 1
+    #####################################################################################
+            elif state == 23: #ignora todo hasta agregar el dominio
+                if ord(actual) == 61:
+                    state = 24
+                    x = x + 1 
+                else:
+                    x = x + 1
+    ######################################################################################    
+            elif state == 24 : #agrega el dominio
+                if x % 2 == 1 and ( x > 3 or ord(actual) != 10 ) :
+                    if ord(actual) == 10:
+                        state = 25
+                        dominio = auxiliar
+                        auxiliar = ''
+                        x = x + 1
+                    else:
+                        auxiliar = auxiliar + actual
+                        x = x + 1
+                else:
+                    x = x + 1
+#####################################################################################
+            elif state == 25: #ignora todo hasta agregar el nombre del equipo
+                if ord(actual) == 61:
+                    state = 26
+                    x = x + 1 
+                else:
+                    x = x + 1
+    ######################################################################################    
+            elif state == 26 : #agrega el dominio
+                if x % 2 == 1 and ( x > 3 or ord(actual) != 10 ) :
+                    if ord(actual) == 10:
+                        state = 27
+                        nombreEquip = auxiliar
+                        auxiliar = ''
+                        x = x + 1
+                    else:
+                        auxiliar = auxiliar + actual
+                        x = x + 1
+                else:
+                    x = x + 1
+#####################################################################################
+            elif state == 27: #ignora todo hasta agregar el ram
+                if ord(actual) == 61:
+                    state = 28
+                    x = x + 1 
+                else:
+                    x = x + 1
+    ######################################################################################    
+            elif state == 28 : #agrega el ram
+                if x % 2 == 1 and ( x > 3 or ord(actual) != 10 ) :
+                    if ord(actual) == 10:
+                        state = 29
+                        ram = auxiliar
+                        auxiliar = ''
+                        x = x + 1
+                    else:
+                        auxiliar = auxiliar + actual
+                        x = x + 1
+                else:
+                    x = x + 1
+#####################################################################################
+            elif state == 29: #ignora todo hasta agregar el username
+                if ord(actual) == 92:
+                    state = 30
+                    x = x + 1 
+                else:
+                    x = x + 1
+    ######################################################################################    
+            elif state == 30 : #agrega el username
+                if x % 2 == 1 and ( x > 3 or ord(actual) != 10 ) :
+                    if ord(actual) == 10:
+                        userName = auxiliar
+                        auxiliar = ''
+                        x = x + 1
+                        state = 31
+                    else:
+                        auxiliar = auxiliar + actual
+                        x = x + 1
+                else:
+                    x = x + 1
+            elif state == 31:
+                x = x + 1
+###########################################################################
+        if not linea:
+            usuario.append(nombre)
+            usuario.append(userName)
+            usuario.append(nombreEquip)
+            usuario.append(ip)
+            usuario.append(departamento)
+            usuario.append(marca)
+            usuario.append(modelo)
+            usuario.append(windows)
+            usuario.append(licenciaWindows)
+            usuario.append(cpu)
+            usuario.append(discoDuro)
+            usuario.append(ram)
+            usuario.append(usb)
+            usuario.append(carpeta)
+            usuarios.append(usuario)
+            break
+    f.close()        
 
 def buscar_archivos(ruta):
     archivos_texto = []
@@ -134,11 +378,11 @@ def buscar_archivos(ruta):
 def crear_excel(usuarios):
     wb = openpyxl.Workbook() #crea objeto para trabajar excel
     hoja = wb.active #crea una hoja de datos de excel
-    hoja.append(('Nombre', 'Referencia', 'Stock', 'Precio')) # crea los encabezados de los datos
+    hoja.append(('Responsable', 'Nombre de Usuario','Nombre de Equipo', 'IP', 'Departamento', 'Marca', 'Modelo', 'Sistema Operativo', 'Licencia', 'CPU', 'Disco Duro', 'RAM', 'USB', 'Carpetas Compartidas?')) # crea los encabezados de los datos
     for producto in usuarios: 
         hoja.append(producto) # agrega los valores de las listas a la hoja de datos
     
-    wb.save('BD_USUARIOS.xlsx') # guarda la hoja de excel con los datos obtenidos 
+    wb.save('BD_USUARIO.xlsx') # guarda la hoja de excel con los datos obtenidos 
 
 
 nombre_carpetas = os.listdir(ruta_carpetas)
@@ -147,6 +391,6 @@ for carpeta in nombre_carpetas:
     archivos_texto = buscar_archivos(ruta)
     for texto in archivos_texto:
         automata(texto)
-#crear_excel(usuarios)
+crear_excel(usuarios)
     
     

@@ -34,5 +34,5 @@
  
  wmic path softwarelicensingservice get oa3xoriginalproductkey >> \\131.107.5.64\listado\"%grupo%"\"%ubicacion%.txt"
  
- wmic computersystem get NAME, USERNAME, DOMAIN, MANUFACTURER, MODEL,TOTALPHYSICALMEMORY /format:list >> \\131.107.5.64\listado\"%grupo%"\"%ubicacion%.txt"
+ wmic computersystem get NAME, USERNAME, DOMAIN,TOTALPHYSICALMEMORY /format:list >> \\131.107.5.64\listado\"%grupo%"\"%ubicacion%.txt"
  
