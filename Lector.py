@@ -2,7 +2,7 @@ import os
 import openpyxl
 import time
 
-ruta_carpetas = 'c:/Users/Estuardo Reyes/Desktop/Nueva carpeta/'
+ruta_carpetas = 'D:/Galeria/Escritorio/Nueva carpeta/'
 usuarios = []
 
 def automata(archivo):
@@ -23,10 +23,11 @@ def automata(archivo):
     usb = ''
     carpeta = ''
     userName = ''
+    f = open(ruta+"/"+texto, 'r')
     while (True):
-        linea = archivo.readline()
+        linea = f.readline()
         x = 0
-        while x < len(linea[x]):
+        while x < len(linea):
             actual = linea[x]
             if state == 0:    #agrega el nombre de usuario
                 if actual == '\n':
@@ -61,9 +62,9 @@ def automata(archivo):
                     auxiliar = auxiliar + actual 
                     x = x + 1
 ############################################################################
-            elif state == 4: #ignora la palabra vendor
+            elif state == 3: #agrega si tiene opcion a usb
                 if actual == '\n':
-                    state = 5
+                    state = 4
                     usb = auxiliar
                     print(usb)
                     auxiliar = ''
@@ -72,29 +73,62 @@ def automata(archivo):
                     auxiliar = auxiliar + actual 
                     x = x + 1
 #######################################################
-            elif state == 5: 
-                print(actual)
-                time.sleep(2)
+            elif state == 4: # se encarga de ignorar la palabra vendor
                 if actual == '\n':
                     state = 5
-                    nombre = auxiliar
                     auxiliar = ''
                     x = x + 1
                 else:
-                    auxiliar = auxiliar + actual 
                     x = x + 1
+    ##################################################################################
+            elif state == 5: #agrega el nombre del constructor del equipo
+                if x % 2 == 1 and ( x > 3 or ord(actual) != 10 ) :
+                    if ord(actual) == 10:
+                        state = 6
+                        marca = auxiliar
+                        print(marca)
+                        x = x + 1
+                        auxiliar = ''
+
+                    else:
+                        auxiliar = auxiliar + actual
+                        x = x + 1
+                else:
+                    x = x + 1
+#######################################################
+            elif state == 6: # se encarga de ignorar la palabra name
+                if actual == '\n' and x > 5:
+                    state = 7
+                    auxiliar = ''
+                    x = x + 1
+                else:
+                    x = x + 1
+    ##################################################################################
+            elif state == 7: #agrega el modelo del equipo
+                if x % 2 == 1 and ( x > 3 or ord(actual) != 10 ) :
+                    if ord(actual) == 10:
+                        state = 8
+                        modelo = auxiliar
+                        print(modelo)
+                        auxiliar = ''
+                        x = x + 1
+                    else:
+                        auxiliar = auxiliar + actual
+                        x = x + 1
+                else:
+                    x = x + 1
+
+
                 
                     
                 
 
 def buscar_archivos(ruta):
-    print("entro a buscar")
     archivos_texto = []
     archivos = os.listdir(ruta)
     for archivo in archivos:
-        if archivo[-4] == ".txt":
+        if archivo[-4] == "." and archivo[-3] == "t" and archivo[-2] == "x" and archivo[-1] == "t":
             archivos_texto.append(archivo)
-            print(archivo)
     return archivos_texto
 
 def crear_excel(usuarios):
@@ -107,18 +141,12 @@ def crear_excel(usuarios):
     wb.save('BD_USUARIOS.xlsx') # guarda la hoja de excel con los datos obtenidos 
 
 
-print("iniciando")
 nombre_carpetas = os.listdir(ruta_carpetas)
 for carpeta in nombre_carpetas:
-    print(carpeta)
     ruta = ruta_carpetas + carpeta
     archivos_texto = buscar_archivos(ruta)
-    
     for texto in archivos_texto:
-        print(texto)
-        f = open(ruta+"/"+texto, mode='r')
-        mensaje = f.read()
-        automata(mensaje)
+        automata(texto)
 #crear_excel(usuarios)
     
     
