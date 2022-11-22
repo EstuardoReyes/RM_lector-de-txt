@@ -12,9 +12,9 @@
 
  echo %grupo% >> \\131.107.5.64\listado\"%grupo%"\"%ubicacion%.txt"
  
- echo carpetas?: %carpeta% >> \\131.107.5.64\listado\"%grupo%"\"%ubicacion%.txt"
+ echo %carpeta% >> \\131.107.5.64\listado\"%grupo%"\"%ubicacion%.txt"
  
- echo usb?: %usb%  >> \\131.107.5.64\listado\"%grupo%"\"%ubicacion%.txt"
+ echo %usb%  >> \\131.107.5.64\listado\"%grupo%"\"%ubicacion%.txt"
 
  wmic csproduct get vendor >> \\131.107.5.64\listado\"%grupo%"\"%ubicacion%.txt"
  
