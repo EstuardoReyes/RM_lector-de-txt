@@ -198,19 +198,19 @@ def automata(archivo):
                     x = x + 1
                 elif ord(actual) == 10 and auxiliar != '':
                     state = 17
+                    discoDuro = str(int(auxiliar)/1073741824)
+                    auxiliar = ''
                     x = x + 1
                 else:
                     x = x + 1
 ###########################################################
             elif state == 17: #verifica si viene otro disco duro o no
                 if ord(actual) > 47 and ord(actual) < 58:
-                    auxiliar = auxiliar + ",  "
+                    discoDuro = discoDuro + ",  "
                     state = 18
                 elif ord(actual) == 77:
                     state = 19
-                    discoDuro = auxiliar
                     auxiliar = ''
-                    x = x + 1
                 else:
                     x = x + 1
 #####################################################################
@@ -220,7 +220,8 @@ def automata(archivo):
                     x = x + 1
                 elif ord(actual) == 10 and auxiliar != '':
                     state = 19
-                    discoDuro = auxiliar
+                    aux = str(int(auxiliar) / 1073741824)
+                    discoDuro = discoDuro + aux
                     auxiliar = ''
                     x = x + 1
                 else:
@@ -360,7 +361,8 @@ def automata(archivo):
             usuario.append(licenciaWindows)
             usuario.append(cpu)
             usuario.append(discoDuro)
-            usuario.append(ram)
+            ram = int(ram)/1073741824 
+            usuario.append(str(ram))
             usuario.append(usb)
             usuario.append(carpeta)
             usuarios.append(usuario)
