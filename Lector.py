@@ -24,6 +24,8 @@ def automata(archivo):
     carpeta = ''
     userName = ''
     dominio = ''
+    antivirus = ''
+    actualizado = ''
     usuario = []
     f = open(ruta+"/"+texto, 'r')
     while (True):
@@ -63,13 +65,33 @@ def automata(archivo):
 ############################################################################
             elif state == 3: #agrega si tiene opcion a usb
                 if actual == '\n':
-                    state = 4
+                    state = 100
                     usb = auxiliar
                     auxiliar = ''
                     x = x + 1
                 else:
                     auxiliar = auxiliar + actual 
                     x = x + 1
+ ################################################################################
+            elif state == 100: #agrega si tiene antivirus
+                if actual == '\n':
+                    state = 101
+                    antivirus = auxiliar
+                    auxiliar = ''
+                    x = x + 1
+                else:
+                    auxiliar = auxiliar + actual 
+                    x = x + 1  
+ ################################################################################
+            elif state == 101: #agrega si esta actualizado el antivirus
+                if actual == '\n':
+                    state = 4
+                    actualizado = auxiliar
+                    auxiliar = ''
+                    x = x + 1
+                else:
+                    auxiliar = auxiliar + actual 
+                    x = x + 1                   
 #######################################################
             elif state == 4: # se encarga de ignorar la palabra vendor
                 if actual == '\n':
@@ -122,7 +144,7 @@ def automata(archivo):
                 else:
                     x = x + 1
     ##################################################################################
-            elif state == 9: #agrega el modelo del equipo
+            elif state == 9: #agrega el serial
                 if x % 2 == 1 and ( x > 3 or ord(actual) != 10 ) :
                     if ord(actual) == 10:
                         state = 10
@@ -346,6 +368,7 @@ def automata(archivo):
                         x = x + 1
                 else:
                     x = x + 1
+        #####################################################################################
             elif state == 31:
                 x = x + 1
 ###########################################################################
@@ -357,8 +380,11 @@ def automata(archivo):
             usuario.append(departamento)
             usuario.append(marca)
             usuario.append(modelo)
+            usuario.append(serial)
             usuario.append(windows)
             usuario.append(licenciaWindows)
+            usuario.append(antivirus)
+            usuario.append(actualizado)
             usuario.append(cpu)
             usuario.append(discoDuro)
             ram = int(ram)/1073741824 
@@ -380,7 +406,7 @@ def buscar_archivos(ruta):
 def crear_excel(usuarios):
     wb = openpyxl.Workbook() #crea objeto para trabajar excel
     hoja = wb.active #crea una hoja de datos de excel
-    hoja.append(('Responsable', 'Nombre de Usuario','Nombre de Equipo', 'IP', 'Departamento', 'Marca', 'Modelo', 'Sistema Operativo', 'Licencia', 'CPU', 'Disco Duro', 'RAM', 'USB', 'Carpetas Compartidas?')) # crea los encabezados de los datos
+    hoja.append(('Responsable', 'Nombre de Usuario','Nombre de Equipo', 'IP', 'Departamento', 'Marca', 'Modelo', 'Serial', 'Sistema Operativo', 'Licencia','Antivirus','Actualizado','CPU', 'Disco Duro', 'RAM', 'USB', 'Carpetas Compartidas?')) # crea los encabezados de los datos
     for producto in usuarios: 
         hoja.append(producto) # agrega los valores de las listas a la hoja de datos
     
